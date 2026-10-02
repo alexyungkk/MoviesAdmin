@@ -15,7 +15,7 @@ public class MoviesController : Controller
     // GET: MOVIES
     public async Task<IActionResult> Index()    
     {
-        return View(await _context.Movie.ToListAsync());
+        return View(await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync());
     }
 
     // GET: MOVIES/Details/5
