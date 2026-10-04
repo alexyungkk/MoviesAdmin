@@ -6,6 +6,7 @@ namespace MoviesAdmin.Models
     {   
         public int Id { get; set; }
 
+        [StringLength(100)]
         [Required]
         public string Title { get; set; } = string.Empty;
 
