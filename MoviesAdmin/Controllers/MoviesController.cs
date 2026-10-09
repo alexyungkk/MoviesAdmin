@@ -15,20 +15,24 @@ public class MoviesController : Controller
     // GET: MOVIES
     public async Task<IActionResult> Index()
     {
-        var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
+        //var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
+        // Retrieve all trails from the database
+        var movies = await _context.Movie.ToListAsync();
         return View(movies);
     }
 
     // GET: MOVIES/Details/5
     public async Task<IActionResult> Details(int? id)
     {
+        // Check if the id parameter is null from URL
         if (id == null)
         {
-            return NotFound();
+            return NotFound();  // return a 404 Not Found response if the id is null
         }
-
+        // Retrieve the movie with the specified id from the database
         var movie = await _context.Movie
             .FirstOrDefaultAsync(m => m.Id == id);
+        // Check if the movie exists in the database
         if (movie == null)
         {
             return NotFound();
@@ -49,11 +53,13 @@ public class MoviesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate")] Movie movie)
-    {
+    {    
+        // Check if the model state is valid before adding the trail to the database
         if (ModelState.IsValid)
         {
             _context.Add(movie);
             await _context.SaveChangesAsync();
+            // Redirect to the Index action after successfully creating the trail
             return RedirectToAction(nameof(Index));
         }
         return View(movie);
@@ -66,7 +72,7 @@ public class MoviesController : Controller
         {
             return NotFound();
         }
-
+        // Retrieve the movie with the specified id from the database
         var movie = await _context.Movie.FindAsync(id);
         if (movie == null)
         {
