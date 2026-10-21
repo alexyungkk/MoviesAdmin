@@ -1,28 +1,29 @@
+@using Microsoft.AspNetCore.Html
 @model MoviesAdmin.Models.Movie
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="mb-4">Details - @Html.DisplayFor(model => model.Title)</h1>
+
+<img src="@Model.ImageUrl" alt="@Model.Title" class="w-25" />
 
 <div>
-    <h4>Movie</h4>
-    <hr />
-    <dl class="row">
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
     </dl>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Synopsis)
         </dt>
         <dd class = "col-sm-10" style="text-align:justify;">
-            @Html.DisplayFor(model => model.Synopsis)
+            @* @Html.DisplayFor(model => model.Synopsis) *@
+            @{
+            var synopsisWithBreaks = new HtmlString(Model.Synopsis
+            .Replace("\r\n", "<br />")
+            .Replace("\n", "<br />")
+            .Replace("\r", "<br />")
+            );
+            }
+            @synopsisWithBreaks
         </dd>
     </dl>
         <dt class = "col-sm-2">

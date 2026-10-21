@@ -2,22 +2,25 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAdmin.Models;
+using MoviesAdmin.Services;
 
 public class MoviesController : Controller
 {
     private readonly MoviesAdminContext _context;
+    private readonly AzureStroageService _blobService;
 
-    public MoviesController(MoviesAdminContext context)
+    public MoviesController(MoviesAdminContext context, AzureStroageService blobService)
     {
         _context = context;
+        _blobService = blobService;
     }
 
     // GET: MOVIES
     public async Task<IActionResult> Index()
     {
-        //var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
+        var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
         // Retrieve all trails from the database
-        var movies = await _context.Movie.ToListAsync();
+        //var movies = await _context.Movie.ToListAsync();
         return View(movies);
     }
 
@@ -52,13 +55,29 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate")] Movie movie)
-    {    
+    public async Task<IActionResult> Create([Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate")] Movie movie, IFormFile? imageFile)
+    {
+        //?Validate if image file is uploaded
+        if (imageFile == null)
+        {
+            // Manully add a validation failure
+            ModelState.AddModelError("ImageFile", "The image file upload is required.");
+
+        }
         // Check if the model state is valid before adding the trail to the database
         if (ModelState.IsValid)
-        {
+        {   //TO-DO: we need unique file names so they don't get overwritten. Usa a GUID.jpg
+            var extension = Path.GetExtension(imageFile!.FileName);
+            var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+            
+            string imageUrl = await _blobService.UploadFileAsync(imageFile, uniqueFileName); // use the original filename
+            // Save image Url in Movie record
+            movie.ImageUrl = imageUrl;
+
+            //Save record in database
             _context.Add(movie);
             await _context.SaveChangesAsync();
+
             // Redirect to the Index action after successfully creating the trail
             return RedirectToAction(nameof(Index));
         }
@@ -86,7 +105,7 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate")] Movie movie)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate,ImageUrl")] Movie movie)
     {
         if (id != movie.Id)
         {

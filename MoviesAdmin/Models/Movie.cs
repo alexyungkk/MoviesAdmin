@@ -25,8 +25,11 @@ namespace MoviesAdmin.Models
         [Required]
         public int Runtime { get; set; }
 
+        public string ImageUrl { get; set; } = string.Empty;
+
         [Required]
         [DataType(DataType.Date)]
+        [Display(Name = "Release Date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime RelaseDate { get; set; } = DateTime.Today;
     }

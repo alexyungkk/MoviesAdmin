@@ -7,25 +7,28 @@
 <h1>Movies List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                Title
+                <!-- Image of Trail -->
             </th>
             <th>
-                Genre
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                Rating
+                @Html.DisplayNameFor(model => model.Genre)
             </th>
             <th>
-                Runtime
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th>
-                Relase Date
+                @Html.DisplayNameFor(model => model.Runtime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RelaseDate)
             </th>
             <th></th>
         </tr>
@@ -33,6 +36,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <th>
+                <img src="@item.ImageUrl" alt="@item.Title" class="thumbnail" />
+            </th>
             <td>
                 @Html.DisplayFor(model => item.Title)
             </td>

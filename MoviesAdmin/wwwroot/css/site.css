@@ -33,3 +33,8 @@ body {
 .form-group {
     padding-bottom: 7px;
 }
+
+.thumbnail {
+    width: 150px;
+    height: auto;
+}
