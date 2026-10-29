@@ -1,0 +1,30 @@
+@model MoviesAdmin.Models.AudienceRating
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        @* <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Movies)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Movies)
+        </dd> *@
+    </dl>
+        <dt class = "col-sm-2">
+            <label asp-for="Title" class="mb-3">Audience Rating</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

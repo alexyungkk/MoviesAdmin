@@ -1,0 +1,9 @@
+@page
+@model MoviesAdmin.Models.AudienceRatingDeleteModel
+<h1>Delete Audience Rating</h1>
+<p>Are you sure you want to delete this audience rating?</p>
+<form method="post">
+    <input type="hidden" name="Id" value="@Model.AudienceRating.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="List" class="btn btn-secondary">Back to List</a>
+</form>

@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviesAdmin.Models;
 using MoviesAdmin.Services;
@@ -18,10 +19,15 @@ public class MoviesController : Controller
     // GET: MOVIES
     public async Task<IActionResult> Index()
     {
-        var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
+        //var movies = await _context.Movie.OrderBy(m => m.RelaseDate).ToListAsync();
+        List<Movie> Movies = await _context.Movie
+        .Include(m => m.Genre)
+        .Include(m => m.AudienceRating)
+        .ToListAsync();
+
         // Retrieve all trails from the database
         //var movies = await _context.Movie.ToListAsync();
-        return View(movies);
+        return View(Movies);
     }
 
     // GET: MOVIES/Details/5
@@ -34,7 +40,11 @@ public class MoviesController : Controller
         }
         // Retrieve the movie with the specified id from the database
         var movie = await _context.Movie
+            .Include(m => m.Genre)
+            .Include(m => m.AudienceRating)
             .FirstOrDefaultAsync(m => m.Id == id);
+
+
         // Check if the movie exists in the database
         if (movie == null)
         {
@@ -47,6 +57,12 @@ public class MoviesController : Controller
     // GET: MOVIES/Create
     public IActionResult Create()
     {
+        var genres = _context.Genre.ToList();
+        ViewBag.GenreId = new SelectList(genres, "Id", "Title");
+
+        var audienceRatings = _context.AudienceRating.ToList();
+        ViewBag.AudienceRatingId = new SelectList(audienceRatings, "Id", "Title");
+
         return View();
     }
 
@@ -55,7 +71,8 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate")] Movie movie, IFormFile? imageFile)
+    public async Task<IActionResult> Create([Bind("Id,Title,Synopsis,Genre,Rating,Runtime," +
+        "GenreId,AudienceRatingId,CriticReviewId,RelaseDate")] Movie movie, IFormFile? imageFile)
     {
         //?Validate if image file is uploaded
         if (imageFile == null)
@@ -92,7 +109,13 @@ public class MoviesController : Controller
             return NotFound();
         }
         // Retrieve the movie with the specified id from the database
-        var movie = await _context.Movie.FindAsync(id);
+        //var movie = await _context.Movie.FindAsync(id);
+        var movie = await _context.Movie
+            .Include(m => m.Genre)
+            .Include(m => m.AudienceRating)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Title", movie.GenreId);
+        ViewData["AudienceRatingId"] = new SelectList(_context.AudienceRating, "Id", "Title", movie.AudienceRatingId);
         if (movie == null)
         {
             return NotFound();
@@ -105,7 +128,8 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Synopsis,Genre,Rating,Runtime,RelaseDate,ImageUrl")] Movie movie)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Synopsis,Rating,Runtime," +
+        "GenreId,AudienceRatingId,CriticReviewId,RelaseDate,ImageUrl")] Movie movie)
     {
         if (id != movie.Id)
         {
@@ -132,6 +156,14 @@ public class MoviesController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+        var genres = _context.Genre.ToList();
+        ViewBag.GenreId = new SelectList(genres, "Id", "Title");
+
+        ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Title", movie.GenreId);
+        ViewData["AudienceRatingId"] = new SelectList(_context.AudienceRating, "Id", "Title", movie.AudienceRatingId);
+
+        var audienceRatings = _context.AudienceRating.ToList();
+        ViewBag.AudienceRatingId = new SelectList(audienceRatings, "Id", "Title");
         return View(movie);
     }
 
@@ -144,11 +176,9 @@ public class MoviesController : Controller
         }
 
         var movie = await _context.Movie
+            .Include(m => m.Genre)
+            .Include(m => m.AudienceRating)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (movie == null)
-        {
-            return NotFound();
-        }
 
         return View(movie);
     }

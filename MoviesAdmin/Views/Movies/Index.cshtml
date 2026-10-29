@@ -22,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Genre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Rating)
+                @Html.DisplayNameFor(model => model.AudienceRating)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Runtime)
@@ -43,10 +43,10 @@
                 @Html.DisplayFor(model => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Genre)
+                @Html.DisplayFor(model => item.Genre.Title)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Rating)
+                @Html.DisplayFor(model => item.AudienceRating.Title)
             </td>
             <td>
                 @((item.Runtime) / 60) h @((item.Runtime) % 60) m  

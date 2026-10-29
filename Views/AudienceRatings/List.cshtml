@@ -1,0 +1,26 @@
+@page
+@model MoviesAdmin.Models.AudienceRatingListModel
+<h1>Audience Ratings</h1>
+<a asp-action="Create">Create New</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Rating</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.AudienceRatings) {
+            <tr>
+                <td>@item.Rating</td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
